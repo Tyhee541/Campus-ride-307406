@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: campus-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: campus-frontend
+  template:
+    metadata:
+      labels:
+        app: campus-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: dist_sys_app-frontend:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NEXT_PUBLIC_SUPABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: campus-ride-secret
+              key: supabase_url
+        - name: NEXT_PUBLIC_SUPABASE_ANON_KEY
+          valueFrom:
+            secretKeyRef:
+              name: campus-ride-secret
+              key: supabase_anon_key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: campus-frontend-service
+spec:
+  selector:
+    app: campus-frontend
+  ports:
+  - port: 3000
+    targetPort: 3000
+  type: ClusterIP

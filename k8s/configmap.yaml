@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: campus-ride-config
+data:
+  backend_host: "campus-backend-service"
+  backend_port: "8000"
+  node_env: "production"

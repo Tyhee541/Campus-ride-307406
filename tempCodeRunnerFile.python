@@ -1,0 +1,120 @@
+import random
+
+def calculate_movement(initial, sequence):
+    total = 0
+    current = initial
+    for track in sequence:
+        total += abs(track - current)
+        current = track
+    return total
+
+def fcfs(initial, requests):
+    return calculate_movement(initial, requests)
+
+def sstf(initial, requests):
+    reqs = requests[:]
+    current = initial
+    total = 0
+    while reqs:
+        closest = min(reqs, key=lambda x: abs(x - current))
+        total += abs(closest - current)
+        current = closest
+        reqs.remove(closest)
+    return total
+
+def scan(initial, requests, disk_size=200):
+    # moving toward 0 first
+    reqs = sorted(requests)
+    left = [r for r in reqs if r <= initial]
+    right = [r for r in reqs if r > initial]
+    total = 0
+    current = initial
+    # go down to 0
+    for t in reversed(left):
+        total += abs(current - t)
+        current = t
+    total += abs(current - 0)
+    current = 0
+    # then go up
+    for t in right:
+        total += abs(current - t)
+        current = t
+    return total
+
+def c_scan(initial, requests, disk_size=200):
+    # moving toward 199 first, circular
+    reqs = sorted(requests)
+    right = [r for r in reqs if r >= initial]
+    left = [r for r in reqs if r < initial]
+    total = 0
+    current = initial
+    for t in right:
+        total += abs(t - current)
+        current = t
+    total += abs((disk_size - 1) - current)  # go to end
+    current = disk_size - 1
+    total += current - 0  # jump to start
+    current = 0
+    for t in left:
+        total += abs(t - current)
+        current = t
+    return total
+
+def c_look(initial, requests, disk_size=200):
+    # moving toward 0 first, circular LOOK (no travel to ends if no requests there)
+    reqs = sorted(requests)
+    left = [r for r in reqs if r <= initial]
+    right = [r for r in reqs if r > initial]
+    total = 0
+    current = initial
+    for t in reversed(left):
+        total += abs(current - t)
+        current = t
+    if right:
+        # jump from current (lowest visited) to highest, then go down to right's lowest
+        total += abs(current - right[-1])  # jump to top
+        current = right[-1]
+        for t in reversed(right[:-1]):
+            total += abs(current - t)
+            current = t
+    return total
+
+def n_step_scan(initial, requests, disk_size=200, n=4):
+    # split requests into batches of size n, process each batch with SCAN (toward 0 first)
+    reqs = requests[:]
+    current = initial
+    total = 0
+    for i in range(0, len(reqs), n):
+        batch = sorted(reqs[i:i+n])
+        left = [r for r in batch if r <= current]
+        right = [r for r in batch if r > current]
+        for t in reversed(left):
+            total += abs(current - t)
+            current = t
+        for t in right:
+            total += abs(current - t)
+            current = t
+    return total
+
+def lifo(initial, requests):
+    reqs = requests[::-1]
+    return calculate_movement(initial, reqs)
+
+def rss(initial, requests, seed=42):
+    rnd = random.Random(seed)
+    reqs = requests[:]
+    rnd.shuffle(reqs)
+    return calculate_movement(initial, reqs)
+
+# Data
+head = 50
+reqs = [78, 170, 43, 156, 24, 160, 190, 160, 67, 40, 112, 45, 78]
+
+print(f"FCFS: {fcfs(head, reqs)}")
+print(f"SSTF: {sstf(head, reqs)}")
+print(f"SCAN: {scan(head, reqs)}")
+print(f"C-SCAN: {c_scan(head, reqs)}")
+print(f"C-LOOK: {c_look(head, reqs)}")
+print(f"N-STEP SCAN: {n_step_scan(head, reqs)}")
+print(f"LIFO: {lifo(head, reqs)}")
+print(f"RSS: {rss(head, reqs)}")

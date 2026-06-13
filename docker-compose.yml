@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: campus-postgres
+    environment:
+      POSTGRES_DB: campus_ride
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: campus-backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres123@postgres:5432/campus_ride
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: campus-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_SUPABASE_URL: https://ucwdyjqprqtmjplmiwdb.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_0a8QOFqR-kW_cI6FU5eK7w_-Y0gBl8O
+    depends_on:
+      - backend
