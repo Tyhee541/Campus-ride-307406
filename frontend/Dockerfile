@@ -16,4 +16,4 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/package*.json ./
 RUN npm install --production
 EXPOSE 3000
-CMD ["sh", "-c", "npm start -- -p ${PORT:-3000}"]
+CMD ["sh", "-c", "node_modules/.bin/next start -H 0.0.0.0 -p ${PORT:-3000}"]
