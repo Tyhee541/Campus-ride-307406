@@ -169,9 +169,9 @@ artillery run load-test.yml
 
 | Name | Matric No | Role | Parts |
 |------|-----------|------|-------|
-| [Leader] | | Team Leader | 1, 2, 3 |
-| [Member 2] | | Developer | 4, 5 |
-| [Member 3] | | Developer | 6, 7, 8 |
+| Muhammad Fathi bin Mohd Fauzi | 307406 | Team Leader | 1, 2, 3, 4, 5, 6, 7, 8 |
+| Anbarasan a/l Subramaniam | 303532 | Developer | 1, 2, 3, 4, 5, 6, 7, 8 |
+| Intisar Ahmad Khan bin Noor Khan | 303693 | Developer | 1, 2, 3, 4, 5, 6, 7, 8 |
 
 ## Troubleshooting
 
